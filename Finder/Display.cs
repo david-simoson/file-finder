@@ -57,21 +57,16 @@ namespace Finder
 
                     Console.Write("\r{0}", CreateDisplayMessage(message));
 
-                    //Console.WriteLine(message);
-
                     break;
                 case (FindingEventTypes.Progress):
                     message = "Hits: "
                         + args.TotalFound
                         + "   Processing File: "
-                        + args.FileName                      
-                        ;
+                        + args.FileName;
 
                     lastMessageLength = message.Length;
 
                     Console.Write("\r{0}", CreateDisplayMessage(message));
-
-                    //Console.WriteLine(message);
 
                     break;
                 default:
