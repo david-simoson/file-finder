@@ -1,4 +1,4 @@
-# Project Title
+# Finder
 
 The purpose of this project is to allow the user to easily search directories for files containing search strings. Both plain strings and Regex are accepted.
 
