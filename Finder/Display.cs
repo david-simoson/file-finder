@@ -17,6 +17,7 @@ namespace Finder
     class Display
     {
         private Finder finder;
+        private int lastMessageLength;
 
         public Display(Finder finder)
         {
@@ -32,7 +33,7 @@ namespace Finder
                     Console.WriteLine(args.Display);
                     break;
                 case (FindingEventTypes.Summary):
-                    Console.WriteLine("Searched: " + finder.AllFiles.Length + " files");
+                    Console.WriteLine("\nSearched: " + finder.AllFiles.Length + " files");
 
                     if (finder.FoundFiles.Count() == 0)
                     {
@@ -47,21 +48,30 @@ namespace Finder
                     }
                     break;
                 case (FindingEventTypes.Found):
-                    var message = "Found: "
+                    var message = "Hits: "
                         + args.TotalFound
                         + "   SEARCH MATCH: "
                         + args.FileName;
 
-                    Console.WriteLine(message);
+                    lastMessageLength = message.Length;
+
+                    Console.Write("\r{0}", CreateDisplayMessage(message));
+
+                    //Console.WriteLine(message);
 
                     break;
                 case (FindingEventTypes.Progress):
-                    message = "Found: "
+                    message = "Hits: "
                         + args.TotalFound
                         + "   Processing File: "
-                        + args.FileName;
+                        + args.FileName                      
+                        ;
 
-                    Console.WriteLine(message);
+                    lastMessageLength = message.Length;
+
+                    Console.Write("\r{0}", CreateDisplayMessage(message));
+
+                    //Console.WriteLine(message);
 
                     break;
                 default:
@@ -69,14 +79,16 @@ namespace Finder
             }
         }
 
-        private string CreateDisplayMessage(FindingEventArgs args)
+        private string CreateDisplayMessage(string message)
         {
-            var message = "Found: "
-                        + args.TotalFound
-                        + " Processing: "
-                        + args.FileName;
+            StringBuilder padding = new StringBuilder();
 
-            return message;
+            for (int i = message.Length; i <= lastMessageLength; i++)
+            {
+                padding.Append(" ");
+            }
+
+            return message + padding;
         }
     }
 }

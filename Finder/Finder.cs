@@ -31,7 +31,7 @@ namespace Finder
         {
             allFiles = Directory.GetFiles(currDir);
 
-            var displayText = "Found " + allFiles.Length + " files...";
+            var displayText = "Searching " + allFiles.Length + " files...";
 
             OnFindingEvent(new FindingEventArgs
             {
