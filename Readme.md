@@ -11,7 +11,8 @@ These instructions will get you a copy of the project up and running on your loc
 What things you need to install the software and how to install them
 
 ```
-This application was developed targetting .NET 4.6.1. While it has not been tested on previous versions it does not contain features which should prevent it from working on Windows systems with earlier versions of .NET installed. 
+This application was developed targetting .NET 4.6.1. 
+While it has not been tested on previous versions it does not contain features which should prevent it from working on Windows systems with earlier versions of .NET installed. 
 ```
 
 ### Installing
@@ -29,3 +30,19 @@ This would be a directory where you would store utilities and such, or you could
 Next Add the directory containing the Finder executable to the list of PATH environment variables in Windows
 
 You should now be able to run finder from any directory on your PC
+
+### Usage
+
+Open command prompt in directory where search is intended
+
+Type finder [searchString] [args]
+
+```
+finder mySearchString
+```
+Will return all files which contain the string "mySearchString"
+
+```
+finder [0-9]+ -rgx
+```
+Will return any files which contain a number (any regex string is permitted: the -rgx arg indicates that the search string is to be treated as regex)
