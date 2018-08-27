@@ -68,7 +68,8 @@ namespace Finder
 
                     totalFound++;
 
-                    foundFiles.Add(file);
+                    if (!foundFiles.Contains(file))
+                        foundFiles.Add(file);
 
                     OnFindingEvent(new FindingEventArgs
                     {

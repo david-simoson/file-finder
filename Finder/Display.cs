@@ -49,7 +49,7 @@ namespace Finder
                 case (FindingEventTypes.Found):
                     var message = "Found: "
                         + args.TotalFound
-                        + "    SEARCH MATCH: "
+                        + "   SEARCH MATCH: "
                         + args.FileName;
 
                     Console.WriteLine(message);
