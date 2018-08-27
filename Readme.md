@@ -1,15 +1,31 @@
-﻿**Finder**
-The purpose of this project is to allow the user to easily search directories for files containing search strings.
+# Project Title
 
-**Setup**
-The intended usage that the executable is placed in a directory for general purpose utilities - if this directory has not already been added to the PATH in environment variables, then do so. If you do no do so the executable will need to be placed into each folder it is run in.
+The purpose of this project is to allow the user to easily search directories for files containing search strings. Both plain strings and Regex are accepted.
 
-**Usage**
-To perform a search of a directory open a command prompt to that directory and type the executable name followed by the search string, i.e:
+## Getting Started
 
-finder testSearchString
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
-This will search the directory for all files which contain the string "testSearchString" and return the results. 
+### Prerequisites
 
+What things you need to install the software and how to install them
 
+```
+This application was developed targetting .NET 4.6.1. While it has not been tested on previous versions it does not contain features which should prevent it from working on Windows systems with earlier versions of .NET installed. 
+```
 
+### Installing
+
+In order to get Finder running on your system...
+
+First clone the repository and build.
+
+Next take the created executable and place it in a directory of your choosing
+
+```
+This would be a directory where you would store utilities and such, or you could optionally keep it in the project directory
+```
+
+Next Add the directory containing the Finder executable to the list of PATH environment variables in Windows
+
+You should now be able to run finder from any directory on your PC
