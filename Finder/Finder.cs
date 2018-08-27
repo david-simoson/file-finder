@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace Finder
 {
@@ -20,11 +21,18 @@ namespace Finder
         private int totalFound;
         private List<string> foundFiles;
 
-        public Finder(string searchString)
+        //args
+        private bool useRegex = false;
+
+        public Finder(string searchString, bool useRegex = false)
         {
             currDir = Directory.GetCurrentDirectory();
             this.searchString = searchString;
             foundFiles = new List<string>();
+
+            //args
+            this.useRegex = useRegex;
+
         }
 
         public void Find()
@@ -53,19 +61,51 @@ namespace Finder
 
         private void SearchFile(string file)
         {
-            var allLines = File.ReadAllLines(file);
-            OnFindingEvent(new FindingEventArgs
+            if (!useRegex)
             {
-                EventType = FindingEventTypes.Progress,
-                FileName = file
-            });
-
-
-            Parallel.ForEach(allLines, new Action<string, ParallelLoopState>((string line, ParallelLoopState state) =>
-            {
-                if (line.Contains(searchString))
+                var allLines = File.ReadAllLines(file);
+                OnFindingEvent(new FindingEventArgs
                 {
+                    EventType = FindingEventTypes.Progress,
+                    FileName = file
+                });
 
+
+                Parallel.ForEach(allLines, new Action<string, ParallelLoopState>((string line, ParallelLoopState state) =>
+                {
+                    if (line.Contains(searchString))
+                    {
+
+                        totalFound++;
+
+                        if (!foundFiles.Contains(file))
+                            foundFiles.Add(file);
+
+                        OnFindingEvent(new FindingEventArgs
+                        {
+                            EventType = FindingEventTypes.Found,
+                            TotalFound = totalFound,
+                            FileName = file
+                        });
+
+                        state.Break();
+                    }
+                }));
+            }
+            else
+            {
+                var text = File.ReadAllText(file);
+
+                if (searchString.StartsWith("/"))
+                    searchString = searchString.Remove(0, 1);
+
+                if (searchString.EndsWith("/"))
+                    searchString = searchString.Remove(searchString.Length - 1, 1);
+
+                Regex rx = new Regex(searchString);
+
+                if (rx.IsMatch(text))
+                {
                     totalFound++;
 
                     if (!foundFiles.Contains(file))
@@ -77,10 +117,8 @@ namespace Finder
                         TotalFound = totalFound,
                         FileName = file
                     });
-
-                    state.Break();
                 }
-            }));
+            }
         }
 
         protected virtual void OnFindingEvent(FindingEventArgs args)

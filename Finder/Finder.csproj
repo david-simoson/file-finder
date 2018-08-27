@@ -45,6 +45,7 @@
     <Compile Include="Display.cs" />
     <Compile Include="Finder.cs" />
     <Compile Include="FindingEventArgs.cs" />
+    <Compile Include="Help.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
