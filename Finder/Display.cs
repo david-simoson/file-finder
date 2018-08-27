@@ -53,9 +53,10 @@ namespace Finder
                         + "   SEARCH MATCH: "
                         + args.FileName;
 
-                    lastMessageLength = message.Length;
 
                     Console.Write("\r{0}", CreateDisplayMessage(message));
+
+                    lastMessageLength = message.Length;
 
                     break;
                 case (FindingEventTypes.Progress):
@@ -64,9 +65,9 @@ namespace Finder
                         + "   Processing File: "
                         + args.FileName;
 
-                    lastMessageLength = message.Length;
-
                     Console.Write("\r{0}", CreateDisplayMessage(message));
+
+                    lastMessageLength = message.Length;
 
                     break;
                 default:
@@ -83,7 +84,7 @@ namespace Finder
                 padding.Append(" ");
             }
 
-            return message + padding;
+            return message + padding.ToString();
         }
     }
 }

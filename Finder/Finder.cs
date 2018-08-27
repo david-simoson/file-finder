@@ -75,11 +75,11 @@ namespace Finder
                 {
                     if (line.Contains(searchString))
                     {
-
-                        totalFound++;
-
                         if (!foundFiles.Contains(file))
+                        {
+                            totalFound++;
                             foundFiles.Add(file);
+                        }
 
                         OnFindingEvent(new FindingEventArgs
                         {
@@ -95,6 +95,11 @@ namespace Finder
             else
             {
                 var text = File.ReadAllText(file);
+                OnFindingEvent(new FindingEventArgs
+                {
+                    EventType = FindingEventTypes.Progress,
+                    FileName = file
+                });
 
                 if (searchString.StartsWith("/"))
                     searchString = searchString.Remove(0, 1);
