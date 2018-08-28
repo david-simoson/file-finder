@@ -6,76 +6,76 @@ using System.Threading.Tasks;
 
 namespace Finder
 {
-    public enum FindingEventTypes
+    static class Display
     {
-        Header,
-        Progress,
-        Found,
-        Summary
-    }
+        public static int NumHits { get; set; }
 
-    class Display
-    {
-        private Finder finder;
-        private int lastMessageLength;
+        public static string FileName { get; set; }
 
-        public Display(Finder finder)
+        private static int lastMessageLength;
+
+        private static bool needCarriageReturn = false;
+
+        public static void NewLine(string message)
         {
-            finder.FindingEvent += UpdateDisplay;
-            this.finder = finder;
+            StringBuilder sb = new StringBuilder();
+
+            if (needCarriageReturn)
+                sb.Append("\n");
+
+            sb.Append(message);
+
+            Console.WriteLine(sb.ToString());
         }
 
-        protected void UpdateDisplay(object sender, FindingEventArgs args)
+
+        public static void RewriteLine(string message)
         {
-            switch (args.EventType)
+            needCarriageReturn = true;
+
+            var displayMessage = "Hits: "
+                + NumHits
+                + "    " + message + ": "
+                + FileName;
+
+            if (displayMessage.Length < lastMessageLength)
             {
-                case (FindingEventTypes.Header):
-                    Console.WriteLine(args.Display);
-                    break;
-                case (FindingEventTypes.Summary):
-                    Console.WriteLine("\nSearched: " + finder.AllFiles.Length + " files");
+                displayMessage = PadDisplayMessage(displayMessage);
+            }
 
-                    if (finder.FoundFiles.Count() == 0)
-                    {
-                        Console.WriteLine("No files were found containing the search string");
-                        break;
-                    }
+            lastMessageLength = displayMessage.Length;
 
-                    Console.WriteLine("Found: " + finder.FoundFiles.Count() + " files containing the search string: ");
-                    foreach (string file in finder.FoundFiles)
-                    {
-                        Console.WriteLine(file);
-                    }
-                    break;
-                case (FindingEventTypes.Found):
-                    var message = "Hits: "
-                        + args.TotalFound
-                        + "   SEARCH MATCH: "
-                        + args.FileName;
+            Console.Write("\r{0}", displayMessage);
+        }
 
+        public static void PrintSummary(string[] allFiles, string[] foundFiles)
+        {
+            StringBuilder sb = new StringBuilder();
 
-                    Console.Write("\r{0}", CreateDisplayMessage(message));
+            if (needCarriageReturn)
+                sb.Append("\n");
 
-                    lastMessageLength = message.Length;
+            sb.Append("Searched: ")
+                .Append(allFiles.Length)
+                .Append(" files");
 
-                    break;
-                case (FindingEventTypes.Progress):
-                    message = "Hits: "
-                        + args.TotalFound
-                        + "   Processing File: "
-                        + args.FileName;
+            Console.WriteLine(sb.ToString());
 
-                    Console.Write("\r{0}", CreateDisplayMessage(message));
+            if (foundFiles.Count() == 0)
+            {
+                Console.WriteLine("No files were found containing the search string");
+                return;
+            }
 
-                    lastMessageLength = message.Length;
-
-                    break;
-                default:
-                    break;
+            Console.WriteLine("Found: " + foundFiles.Count() + " files containing the search string: ");
+            foreach (string file in foundFiles)
+            {
+                Console.WriteLine(file);
             }
         }
 
-        private string CreateDisplayMessage(string message)
+
+        private static string PadDisplayMessage(string message)
         {
             StringBuilder padding = new StringBuilder();
 
@@ -86,5 +86,7 @@ namespace Finder
 
             return message + padding.ToString();
         }
+
+
     }
 }
