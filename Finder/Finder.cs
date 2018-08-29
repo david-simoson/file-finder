@@ -10,6 +10,7 @@ namespace Finder
         private string[] allFiles;
         private string searchString;
         private List<string> foundFiles;
+        private FileSearcher searcher;
 
         //args
         private bool useRegex = false;
@@ -21,6 +22,8 @@ namespace Finder
 
             currDir = Directory.GetCurrentDirectory();
             foundFiles = new List<string>();
+            searcher = new FileSearcher(searchString);
+            searcher.FileFound += OnFileFound;
             Find();
         }
 
@@ -33,24 +36,21 @@ namespace Finder
             //now process the files
             foreach (string file in allFiles)
             {
-                using (FileSearcher searcher = new FileSearcher(file, searchString))
+                
+
+                if (!useRegex)
                 {
-                    searcher.FileFound += OnFileFound;
+                    searcher.Search(file);
 
-                    if (!useRegex)
-                    {
-                        searcher.Search();
-
-                    }
-                    else //if a regex search
-                    {
-                        searcher.SearchRegex();
-                    }
+                }
+                else //if a regex search
+                {
+                    searcher.SearchRegex(file);
                 }
             }
 
             Display.PrintSummary(allFiles, foundFiles.ToArray());
-        }
+        }  
 
         private void InitializeArgs(string[] args)
         {

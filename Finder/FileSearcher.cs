@@ -1,32 +1,27 @@
-﻿using Microsoft.Win32.SafeHandles;
-using System;
+﻿using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Finder
 {
-    public class FileSearcher : IDisposable
+    public class FileSearcher
     {
         public event EventHandler<string> FileFound;
 
         private string fileName;
         private string searchString;
-        private bool disposed = false;
-        SafeHandle handle = new SafeFileHandle(IntPtr.Zero, true);
 
-        public FileSearcher(string fileName, string searchString)
+        public FileSearcher(string searchString)
         {
             this.fileName = fileName;
             this.searchString = searchString;
 
             Display.FileName = fileName;
             Display.RewriteLine("Processing file");
-
         }
 
-        public void Search()
+        public void Search(string fileName)
         {
             string[] allLines = null;
 
@@ -57,7 +52,7 @@ namespace Finder
             }));
         }
 
-        public void SearchRegex()
+        public void SearchRegex(string fileName)
         {
             string text = null;
             try
@@ -93,28 +88,6 @@ namespace Finder
         protected virtual void OnFileFound(string fileName)
         {
             FileFound?.Invoke(this, fileName);
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        // Protected implementation of Dispose pattern.
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposed)
-                return;
-
-            if (disposing)
-            {
-                handle.Dispose();
-                // Free any other managed objects here.
-                //
-            }
-
-            disposed = true;
         }
     }
 }
