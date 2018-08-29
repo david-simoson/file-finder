@@ -10,7 +10,7 @@ namespace Finder
     {
         public static int NumHits { get; set; }
 
-        public static string FileName { get; set; }
+        private static string fileName;
 
         private static int lastMessageLength;
 
@@ -29,14 +29,17 @@ namespace Finder
         }
 
 
-        public static void RewriteLine(string message)
+        public static void RewriteLine(string message, string file = null)
         {
+            if (!String.IsNullOrEmpty(file))
+                fileName = file;
+
             needCarriageReturn = true;
 
             var displayMessage = "Hits: "
                 + NumHits
                 + "    " + message + ": "
-                + FileName;
+                + fileName;
 
             if (displayMessage.Length < lastMessageLength)
             {

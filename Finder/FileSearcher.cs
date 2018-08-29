@@ -9,20 +9,17 @@ namespace Finder
     {
         public event EventHandler<string> FileFound;
 
-        private string fileName;
         private string searchString;
 
         public FileSearcher(string searchString)
         {
-            this.fileName = fileName;
             this.searchString = searchString;
-
-            Display.FileName = fileName;
-            Display.RewriteLine("Processing file");
         }
 
         public void Search(string fileName)
         {
+            Display.RewriteLine("Processing file", fileName);
+
             string[] allLines = null;
 
             try
@@ -36,8 +33,7 @@ namespace Finder
 
             if (allLines == null)
             {
-                //TODO: add notification to user that this file was not searched - but continue searching
-
+                Display.NewLine("***ERROR SEARCHING: " + fileName + " skipping file and continuing search...");
                 return;
             }
 
@@ -54,6 +50,8 @@ namespace Finder
 
         public void SearchRegex(string fileName)
         {
+            Display.RewriteLine("Processing file", fileName);
+
             string text = null;
             try
             {
@@ -66,8 +64,7 @@ namespace Finder
 
             if (String.IsNullOrEmpty(text))
             {
-                //TODO: add notification to user that this file was not searched - but continue searching
-
+                Display.NewLine("***ERROR SEARCHING: " + fileName + " skipping file and continuing search...");
                 return;
             }
 

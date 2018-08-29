@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Collections.Generic;
 
 namespace Finder
@@ -36,12 +37,9 @@ namespace Finder
             //now process the files
             foreach (string file in allFiles)
             {
-                
-
                 if (!useRegex)
                 {
                     searcher.Search(file);
-
                 }
                 else //if a regex search
                 {
@@ -56,16 +54,20 @@ namespace Finder
         {
             searchString = args[0];
 
-            foreach (string arg in args)
+            if (args.Length > 1)
             {
-                switch (arg)
+                for (int i = 1; i < args.Length; i++)
                 {
-                    case ("-rgx"):
-                        useRegex = true;
-                        break;
-                    default:
-                        //TODO: Notify user that their argument is not handled
-                        break;
+                    switch (args[i])
+                    {
+                        case ("-rgx"):
+                            useRegex = true;
+                            break;
+                        default:
+                            Display.NewLine("\"" + args[i] + "\" is not a valid argument - use \"-help\" for usage information on acceptable arguments");
+                            Environment.Exit(0);
+                            break;
+                    }
                 }
             }
         }
