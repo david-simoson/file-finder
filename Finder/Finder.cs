@@ -15,6 +15,7 @@ namespace Finder
 
         //args
         private bool useRegex = false;
+        private bool includeSubfolders = false;
 
         public Finder(string[] args)
         {
@@ -30,7 +31,11 @@ namespace Finder
 
         public void Find()
         {
-            allFiles = Directory.GetFiles(currDir);
+            if (!includeSubfolders)
+                allFiles = Directory.GetFiles(currDir);
+
+            else
+                allFiles = Directory.GetFiles(currDir, "*.*", SearchOption.AllDirectories);
 
             Display.NewLine("Searching " + allFiles.Length + " files");
 
@@ -62,6 +67,9 @@ namespace Finder
                     {
                         case ("-rgx"):
                             useRegex = true;
+                            break;
+                        case ("-sf"):
+                            includeSubfolders = true;
                             break;
                         default:
                             Display.NewLine("\"" + args[i] + "\" is not a valid argument - use \"-help\" for usage information on acceptable arguments");

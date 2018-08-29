@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Finder
 {
@@ -27,7 +25,6 @@ namespace Finder
 
             Console.WriteLine(sb.ToString());
         }
-
 
         public static void RewriteLine(string message, string file = null)
         {
@@ -77,7 +74,6 @@ namespace Finder
             }
         }
 
-
         private static string PadDisplayMessage(string message)
         {
             StringBuilder padding = new StringBuilder();
@@ -89,7 +85,5 @@ namespace Finder
 
             return message + padding.ToString();
         }
-
-
     }
 }

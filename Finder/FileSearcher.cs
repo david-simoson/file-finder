@@ -29,10 +29,6 @@ namespace Finder
             catch
             {
                 //TODO: log this?
-            }
-
-            if (allLines == null)
-            {
                 Display.NewLine("***ERROR SEARCHING: " + fileName + " skipping file and continuing search...");
                 return;
             }
@@ -60,10 +56,6 @@ namespace Finder
             catch
             {
                 //TODO: log this?
-            }
-
-            if (String.IsNullOrEmpty(text))
-            {
                 Display.NewLine("***ERROR SEARCHING: " + fileName + " skipping file and continuing search...");
                 return;
             }
