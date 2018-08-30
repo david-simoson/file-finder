@@ -66,46 +66,47 @@ namespace Finder
             searchString = args[0];
 
             var ignore = false;
-
-            if (args.Length > 1)
+            
+            for (int i = 0; i < args.Length; i++)
             {
-                for (int i = 1; i < args.Length; i++)
+                if (ignore)
                 {
-                    if (ignore)
+                    var dirName = currDir + "\\" + args[i].Replace("\"", "");
+
+                    if (!Directory.Exists(dirName))
                     {
-                        var dirName = currDir + "\\" + args[i].Replace("\"", "");
-
-                        if (!Directory.Exists(dirName))
-                        {
-                            Display.NewLine("-ignore arg must be followed by a valid folder to ignore - please use \"-help\" for usage information");
-                            Environment.Exit(0);
-                        }
-
-                        excludedFolders.Add(dirName.ToLower());
-
-                        ignore = false;
-                        continue;
+                        Display.NewLine(Args.IgnoreDirectory + " must be followed by a valid folder to ignore - please use " + Args.Help + " for usage information");
+                        Environment.Exit(0);
                     }
 
-                    switch (args[i])
-                    {
-                        case ("-rgx"):
-                            useRegex = true;
-                            break;
-                        case ("-sf"):
-                            includeSubfolders = true;
-                            break;
-                        case ("-ignore"):
-                            if (!includeSubfolders)
-                                Display.NewLine("incorrect usage of ignore arg - please use \"-help\" for usage information");
+                    excludedFolders.Add(dirName.ToLower());
 
-                            ignore = true;
-                            break;
-                        default:
-                            Display.NewLine("\"" + args[i] + "\" is not a valid argument - use \"-help\" for usage information on acceptable arguments");
-                            Environment.Exit(0);
-                            break;
-                    }
+                    ignore = false;
+                    continue;
+                }
+
+                switch (args[i])
+                {
+                    case (Args.Help):
+                        Console.WriteLine(Args.HelpDocumentation);
+                        Environment.Exit(0);
+                        break;
+                    case (Args.UseRegex):
+                        useRegex = true;
+                        break;
+                    case (Args.IncludeSubDirectories):
+                        includeSubfolders = true;
+                        break;
+                    case (Args.IgnoreDirectory):
+                        if (!includeSubfolders)
+                            Display.NewLine("incorrect usage of ignore arg - please use " + Args.Help + " for usage information");
+
+                        ignore = true;
+                        break;
+                    default:
+                        Display.NewLine("\"" + args[i] + "\" is not a valid argument - use " + Args.Help + " for usage information on acceptable arguments");
+                        Environment.Exit(0);
+                        break;
                 }
             }
         }

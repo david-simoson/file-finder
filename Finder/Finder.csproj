@@ -42,10 +42,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Args.cs" />
     <Compile Include="Display.cs" />
     <Compile Include="FileSearcher.cs" />
     <Compile Include="Finder.cs" />
-    <Compile Include="Help.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

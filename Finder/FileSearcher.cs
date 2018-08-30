@@ -28,7 +28,6 @@ namespace Finder
             }
             catch
             {
-                //TODO: log this?
                 Display.NewLine("***ERROR SEARCHING: " + fileName + " skipping file and continuing search...");
                 return;
             }
@@ -55,7 +54,6 @@ namespace Finder
             }
             catch
             {
-                //TODO: log this?
                 Display.NewLine("***ERROR SEARCHING: " + fileName + " skipping file and continuing search...");
                 return;
             }

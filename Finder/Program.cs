@@ -9,13 +9,7 @@ namespace Finder
         {
             if (args.Length < 1)
             {
-                Console.WriteLine("You must pass a search string as an argument, Enter \"-help\" for more information on usage");
-                Environment.Exit(0);
-            }
-
-            if (args.Contains("-help"))
-            {
-                Console.WriteLine(Help.HelpString);
+                Console.WriteLine("You must pass a search string as an argument, Enter " + Args.Help + " for more information on usage");
                 Environment.Exit(0);
             }
 
