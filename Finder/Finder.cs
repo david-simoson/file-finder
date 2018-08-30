@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Finder
 {
@@ -16,13 +17,16 @@ namespace Finder
         //args
         private bool useRegex = false;
         private bool includeSubfolders = false;
+        private List<string> excludedFolders;
 
         public Finder(string[] args)
         {
+            currDir = Directory.GetCurrentDirectory();
+            excludedFolders = new List<string>();
+
             if (args.Length > 0)
                 InitializeArgs(args);
 
-            currDir = Directory.GetCurrentDirectory();
             foundFiles = new List<string>();
             searcher = new FileSearcher(searchString);
             searcher.FileFound += OnFileFound;
@@ -35,7 +39,9 @@ namespace Finder
                 allFiles = Directory.GetFiles(currDir);
 
             else
-                allFiles = Directory.GetFiles(currDir, "*.*", SearchOption.AllDirectories);
+                allFiles = Directory.GetFiles(currDir, "*.*", SearchOption.AllDirectories)
+                    .Where(f => !excludedFolders.Contains(Path.GetDirectoryName(f).ToLower()))
+                    .ToArray();
 
             Display.NewLine("Searching " + allFiles.Length + " files");
 
@@ -59,10 +65,28 @@ namespace Finder
         {
             searchString = args[0];
 
+            var ignore = false;
+
             if (args.Length > 1)
             {
                 for (int i = 1; i < args.Length; i++)
                 {
+                    if (ignore)
+                    {
+                        var dirName = currDir + "\\" + args[i].Replace("\"", "");
+
+                        if (!Directory.Exists(dirName))
+                        {
+                            Display.NewLine("-ignore arg must be followed by a valid folder to ignore - please use \"-help\" for usage information");
+                            Environment.Exit(0);
+                        }
+
+                        excludedFolders.Add(dirName.ToLower());
+
+                        ignore = false;
+                        continue;
+                    }
+
                     switch (args[i])
                     {
                         case ("-rgx"):
@@ -70,6 +94,12 @@ namespace Finder
                             break;
                         case ("-sf"):
                             includeSubfolders = true;
+                            break;
+                        case ("-ignore"):
+                            if (!includeSubfolders)
+                                Display.NewLine("incorrect usage of ignore arg - please use \"-help\" for usage information");
+
+                            ignore = true;
                             break;
                         default:
                             Display.NewLine("\"" + args[i] + "\" is not a valid argument - use \"-help\" for usage information on acceptable arguments");
