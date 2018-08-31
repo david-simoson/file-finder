@@ -25,7 +25,7 @@
 @"{0} ignore the contents of a specific subfolder (encapsulate in quotes if folder is space separated)
     ignore must also include subfolder arg
     e.g: finder[searchstring] {1} [unwantedfolder]
-    ignoring multiple folders requires multiple ignore tags followed by undesired folder", 
+    ignoring multiple folders - separate each folder with a space", 
     GetPaddedHelpString(IgnoreDirectory), IgnoreDirectory);
 
         public static readonly string HelpDocumentation = string.Format(
@@ -36,7 +36,7 @@
 
         private static string GetPaddedHelpString(string argString)
         {
-            for (int i = argString.Length; i < padLength; i++)
+            for (var i = argString.Length; i < padLength; i++)
             {
                 argString += " ";
             }

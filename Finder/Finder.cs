@@ -48,14 +48,13 @@ namespace Finder
 
             Display.ShowProgress(allFiles.Length);
 
-            //now process the files
-            for (int i = 0; i < allFiles.Length; i++)
+            for (var i = 0; i < allFiles.Length; i++)
             {
                 if (!useRegex)
                 {
                     searcher.Search(allFiles[i]);
                 }
-                else //if a regex search
+                else
                 {
                     searcher.SearchRegex(allFiles[i]);
                 }
@@ -71,7 +70,7 @@ namespace Finder
 
             var ignore = false;
             
-            for (int i = 0; i < args.Length; i++)
+            for (var i = 0; i < args.Length; i++)
             {
                 if (ignore)
                 {
@@ -79,14 +78,15 @@ namespace Finder
 
                     if (!Directory.Exists(dirName))
                     {
-                        Console.WriteLine(Args.IgnoreDirectory + " must be followed by a valid folder to ignore - please use " + Args.Help + " for usage information");
-                        Environment.Exit(0);
+                        if (excludedFolders.Count() == 0)
+                        {
+                            Console.WriteLine(Args.IgnoreDirectory + " must be followed by valid folder(s) to ignore - please use " + Args.Help + " for usage information");
+                            Environment.Exit(0);
+                        }
+                        ignore = false;
                     }
 
                     excludedFolders.Add(dirName.ToLower());
-
-                    ignore = false;
-                    continue;
                 }
 
                 switch (args[i])
@@ -102,14 +102,17 @@ namespace Finder
                         includeSubfolders = true;
                         break;
                     case (Args.IgnoreDirectory):
-                        if (!includeSubfolders)
-                            Console.WriteLine("incorrect usage of ignore arg - please use " + Args.Help + " for usage information");
-
                         ignore = true;
                         break;
                     default:
                         break;
                 }
+            }
+
+            if (excludedFolders.Count() > 0 && !includeSubfolders)
+            {
+                Console.WriteLine("incorrect usage of " + Args.IgnoreDirectory + " - please use " + Args.Help + " for usage information");
+                Environment.Exit(0);
             }
         }
 
