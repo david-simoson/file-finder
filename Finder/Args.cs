@@ -13,22 +13,22 @@
         public const string IgnoreDirectory = "-ignore";
 
         //Help Strings
-        public static string UseRegexHelp = 
+        public static readonly string UseRegexHelp = 
             string.Format("{0} indicates that the search string is a regex string", 
                 GetPaddedHelpString(UseRegex));
 
-        public static string IncludeSubDirectoriesHelp = 
+        public static readonly string IncludeSubDirectoriesHelp = 
             string.Format("{0} search will include subdirectories", 
                 GetPaddedHelpString(IncludeSubDirectories));
 
-        public static string IgnoreDirectoryHelp = string.Format(
+        public static readonly string IgnoreDirectoryHelp = string.Format(
 @"{0} ignore the contents of a specific subfolder (encapsulate in quotes if folder is space separated)
     ignore must also include subfolder arg
     e.g: finder[searchstring] {1} [unwantedfolder]
     ignoring multiple folders requires multiple ignore tags followed by undesired folder", 
     GetPaddedHelpString(IgnoreDirectory), IgnoreDirectory);
 
-        public static string HelpDocumentation = string.Format(
+        public static readonly string HelpDocumentation = string.Format(
 @"Uses: finder [searchstring] [args]
 {0}
 {1}

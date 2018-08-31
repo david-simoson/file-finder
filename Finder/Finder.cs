@@ -108,8 +108,6 @@ namespace Finder
                         ignore = true;
                         break;
                     default:
-                        //Console.WriteLine("\"" + args[i] + "\" is not a valid argument - use " + Args.Help + " for usage information on acceptable arguments");
-                        //Environment.Exit(0);
                         break;
                 }
             }
@@ -122,7 +120,7 @@ namespace Finder
                 foundFiles.Add(fileName);
             }
 
-            Display.ShowProgress(allFiles.Length, 0, foundFiles.Count(), 0);
+            Display.ShowProgress(allFiles.Length, 0, foundFiles.Count());
         }
 
         private void OnErrorFound(object sender, string fileName)
