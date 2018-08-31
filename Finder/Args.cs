@@ -38,7 +38,8 @@
 @"Uses: finder [searchstring] [args]
 {0}
 {1}
-{2}", UseRegexHelp, IncludeSubDirectoriesHelp, IgnoreDirectoryHelp);
+{2}
+{3}", UseRegexHelp, IncludeSubDirectoriesHelp, VerboseHelp, IgnoreDirectoryHelp);
 
         private static string GetPaddedHelpString(string argString)
         {
