@@ -12,6 +12,7 @@ namespace Finder
         private string[] allFiles;
         private string searchString;
         private List<string> foundFiles;
+        private List<string> errorFiles;
         private FileSearcher searcher;
 
         //args
@@ -28,8 +29,10 @@ namespace Finder
                 InitializeArgs(args);
 
             foundFiles = new List<string>();
+            errorFiles = new List<string>();
             searcher = new FileSearcher(searchString);
             searcher.FileFound += OnFileFound;
+            searcher.ErrorFound += OnErrorFound;
             Find();
         }
 
@@ -43,22 +46,23 @@ namespace Finder
                     .Where(f => !excludedFolders.Contains(Path.GetDirectoryName(f).ToLower()))
                     .ToArray();
 
-            Display.NewLine("Searching " + allFiles.Length + " files");
+            Display.ShowProgress(allFiles.Length);
 
             //now process the files
-            foreach (string file in allFiles)
+            for (int i = 0; i < allFiles.Length; i++)
             {
                 if (!useRegex)
                 {
-                    searcher.Search(file);
+                    searcher.Search(allFiles[i]);
                 }
                 else //if a regex search
                 {
-                    searcher.SearchRegex(file);
+                    searcher.SearchRegex(allFiles[i]);
                 }
+                Display.ShowProgress(allFiles.Length, i + 1);
             }
 
-            Display.PrintSummary(allFiles, foundFiles.ToArray());
+            Display.PrintSummary(foundFiles.ToArray(), errorFiles.ToArray());
         }  
 
         private void InitializeArgs(string[] args)
@@ -75,7 +79,7 @@ namespace Finder
 
                     if (!Directory.Exists(dirName))
                     {
-                        Display.NewLine(Args.IgnoreDirectory + " must be followed by a valid folder to ignore - please use " + Args.Help + " for usage information");
+                        Console.WriteLine(Args.IgnoreDirectory + " must be followed by a valid folder to ignore - please use " + Args.Help + " for usage information");
                         Environment.Exit(0);
                     }
 
@@ -99,13 +103,13 @@ namespace Finder
                         break;
                     case (Args.IgnoreDirectory):
                         if (!includeSubfolders)
-                            Display.NewLine("incorrect usage of ignore arg - please use " + Args.Help + " for usage information");
+                            Console.WriteLine("incorrect usage of ignore arg - please use " + Args.Help + " for usage information");
 
                         ignore = true;
                         break;
                     default:
-                        Display.NewLine("\"" + args[i] + "\" is not a valid argument - use " + Args.Help + " for usage information on acceptable arguments");
-                        Environment.Exit(0);
+                        //Console.WriteLine("\"" + args[i] + "\" is not a valid argument - use " + Args.Help + " for usage information on acceptable arguments");
+                        //Environment.Exit(0);
                         break;
                 }
             }
@@ -113,14 +117,22 @@ namespace Finder
 
         private void OnFileFound(object sender, string fileName)
         {
-            Display.NumHits++;
-
             if (!foundFiles.Contains(fileName))
             {
                 foundFiles.Add(fileName);
             }
 
-            Display.RewriteLine("Match Found");
+            Display.ShowProgress(allFiles.Length, 0, foundFiles.Count(), 0);
+        }
+
+        private void OnErrorFound(object sender, string fileName)
+        {
+            if (!errorFiles.Contains(fileName))
+            {
+                errorFiles.Add(fileName);
+            }
+
+            Display.ShowProgress(allFiles.Length, 0, 0, errorFiles.Count());
         }
     }
 }

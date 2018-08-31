@@ -8,6 +8,7 @@ namespace Finder
     public class FileSearcher
     {
         public event EventHandler<string> FileFound;
+        public event EventHandler<string> ErrorFound;
 
         private string searchString;
 
@@ -18,8 +19,6 @@ namespace Finder
 
         public void Search(string fileName)
         {
-            Display.RewriteLine("Processing file", fileName);
-
             string[] allLines = null;
 
             try
@@ -28,7 +27,7 @@ namespace Finder
             }
             catch
             {
-                Display.NewLine("***ERROR SEARCHING: " + fileName + " skipping file and continuing search...");
+                OnErrorFound(fileName);
                 return;
             }
 
@@ -45,8 +44,6 @@ namespace Finder
 
         public void SearchRegex(string fileName)
         {
-            Display.RewriteLine("Processing file", fileName);
-
             string text = null;
             try
             {
@@ -54,7 +51,7 @@ namespace Finder
             }
             catch
             {
-                Display.NewLine("***ERROR SEARCHING: " + fileName + " skipping file and continuing search...");
+                OnErrorFound(fileName);
                 return;
             }
 
@@ -75,6 +72,11 @@ namespace Finder
         protected virtual void OnFileFound(string fileName)
         {
             FileFound?.Invoke(this, fileName);
+        }
+
+        protected virtual void OnErrorFound(string fileName)
+        {
+            ErrorFound?.Invoke(this, fileName);
         }
     }
 }

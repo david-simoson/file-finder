@@ -6,84 +6,73 @@ namespace Finder
 {
     static class Display
     {
-        public static int NumHits { get; set; }
+        public static int totalSearched = 0;
+        private static int numHits = 0;
+        private static int errors = 0;
 
-        private static string fileName;
-
-        private static int lastMessageLength;
-
-        private static bool needCarriageReturn = false;
-
-        public static void NewLine(string message)
+        public static void ShowProgress (int totalFiles)
         {
-            StringBuilder sb = new StringBuilder();
-
-            if (needCarriageReturn)
-                sb.Append("\n");
-
-            sb.Append(message);
-
-            Console.WriteLine(sb.ToString());
+            ShowProgress(totalFiles, 0);
         }
 
-        public static void RewriteLine(string message, string file = null)
+        public static void ShowProgress (int totalFiles, int totalSearched)
         {
-            if (!String.IsNullOrEmpty(file))
-                fileName = file;
+            ShowProgress(totalFiles, totalSearched, 0);
+        }
 
-            needCarriageReturn = true;
+        public static void ShowProgress (int totalFiles, int totalSearched, int numHits)
+        {
+            ShowProgress(totalFiles, totalSearched, numHits, 0);
+        }
 
-            var displayMessage = "Hits: "
-                + NumHits
-                + "    " + message + ": "
-                + fileName;
+        public static void ShowProgress(int totalFiles, int totalSearched, int numHits, int errors)
+        {
+            if (totalSearched != 0)
+                Display.totalSearched = totalSearched;
 
-            if (displayMessage.Length < lastMessageLength)
+            if (numHits != 0)
+                Display.numHits = numHits;
+
+            if (errors != 0)
+                Display.errors = numHits;
+
+            var progressMessage = 
+                string.Format("Total Files: {0}  Searched: {1}  Hits: {2}  Errors:  {3}",
+                totalFiles,
+                Display.totalSearched,
+                Display.numHits,
+                Display.errors);
+
+            Console.Write("\r" + progressMessage);
+        }
+
+        public static void PrintSummary(string[] foundFiles, string[] errorFiles)
+        {
+            if (errorFiles.Length > 0)
             {
-                displayMessage = PadDisplayMessage(displayMessage);
+                Console.WriteLine("\r\n");
+
+                Console.WriteLine("\nThe following files were unable to be searched and thus were skipped during the process: ");
+                foreach (string errFile in errorFiles)
+                {
+                    Console.WriteLine(errFile);
+                }
+
             }
-
-            lastMessageLength = displayMessage.Length;
-
-            Console.Write("\r{0}", displayMessage);
-        }
-
-        public static void PrintSummary(string[] allFiles, string[] foundFiles)
-        {
-            StringBuilder sb = new StringBuilder();
-
-            if (needCarriageReturn)
-                sb.Append("\n");
-
-            sb.Append("Searched: ")
-                .Append(allFiles.Length)
-                .Append(" files");
-
-            Console.WriteLine(sb.ToString());
 
             if (foundFiles.Count() == 0)
             {
-                Console.WriteLine("No files were found containing the search string");
+                Console.WriteLine("\nNo files were found containing the search string");
                 return;
             }
 
-            Console.WriteLine("Found: " + foundFiles.Count() + " files containing the search string: ");
+            Console.WriteLine("\r\n");
+
+            Console.WriteLine("The following files contained the search string: ");
             foreach (string file in foundFiles)
             {
                 Console.WriteLine(file);
             }
-        }
-
-        private static string PadDisplayMessage(string message)
-        {
-            StringBuilder padding = new StringBuilder();
-
-            for (int i = message.Length; i <= lastMessageLength; i++)
-            {
-                padding.Append(" ");
-            }
-
-            return message + padding.ToString();
         }
     }
 }
