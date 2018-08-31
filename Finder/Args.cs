@@ -12,6 +12,8 @@
 
         public const string IgnoreDirectory = "-ignore";
 
+        public const string Verbose = "-v";
+
         //Help Strings
         public static readonly string UseRegexHelp = 
             string.Format("{0} indicates that the search string is a regex string", 
@@ -20,6 +22,10 @@
         public static readonly string IncludeSubDirectoriesHelp = 
             string.Format("{0} search will include subdirectories", 
                 GetPaddedHelpString(IncludeSubDirectories));
+
+        public static readonly string VerboseHelp =
+            string.Format("{0} indicates that console will write one line for each file being searched", 
+                GetPaddedHelpString(Verbose));
 
         public static readonly string IgnoreDirectoryHelp = string.Format(
 @"{0} ignore the contents of a specific subfolder (encapsulate in quotes if folder is space separated)

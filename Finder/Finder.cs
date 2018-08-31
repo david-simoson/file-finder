@@ -18,6 +18,7 @@ namespace Finder
         //args
         private bool useRegex = false;
         private bool includeSubfolders = false;
+        private bool verbose = false;
         private List<string> excludedFolders;
 
         public Finder(string[] args)
@@ -46,7 +47,8 @@ namespace Finder
                     .Where(f => !excludedFolders.Contains(Path.GetDirectoryName(f).ToLower()))
                     .ToArray();
 
-            Display.ShowProgress(allFiles.Length);
+            if (!verbose)
+                Display.ShowProgress(allFiles.Length);
 
             for (var i = 0; i < allFiles.Length; i++)
             {
@@ -58,7 +60,10 @@ namespace Finder
                 {
                     searcher.SearchRegex(allFiles[i]);
                 }
-                Display.ShowProgress(allFiles.Length, i + 1);
+                if (!verbose)
+                    Display.ShowProgress(allFiles.Length, i + 1);
+                else
+                    Console.WriteLine("Searched: " + allFiles[i]);
             }
 
             Display.PrintSummary(foundFiles.ToArray(), errorFiles.ToArray());
@@ -98,6 +103,9 @@ namespace Finder
                     case (Args.UseRegex):
                         useRegex = true;
                         break;
+                    case (Args.Verbose):
+                        verbose = true;
+                        break;
                     case (Args.IncludeSubDirectories):
                         includeSubfolders = true;
                         break;
@@ -123,7 +131,10 @@ namespace Finder
                 foundFiles.Add(fileName);
             }
 
-            Display.ShowProgress(allFiles.Length, 0, foundFiles.Count());
+            if (!verbose)
+                Display.ShowProgress(allFiles.Length, 0, foundFiles.Count());
+            else
+                Console.WriteLine("MATCH FOUND: " + fileName);
         }
 
         private void OnErrorFound(object sender, string fileName)
@@ -133,7 +144,10 @@ namespace Finder
                 errorFiles.Add(fileName);
             }
 
-            Display.ShowProgress(allFiles.Length, 0, 0, errorFiles.Count());
+            if(!verbose)
+                Display.ShowProgress(allFiles.Length, 0, 0, errorFiles.Count());
+            else
+                Console.WriteLine("ERROR SEARCHING: " + fileName);
         }
     }
 }
