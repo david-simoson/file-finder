@@ -85,41 +85,53 @@ namespace Finder
                     {
                         if (excludedFolders.Count() == 0)
                         {
-                            Console.WriteLine(Args.IgnoreDirectory + " must be followed by valid folder(s) to ignore - please use " + Args.Help + " for usage information");
+                            Console.WriteLine(Args.IgnoreDirectory + " must be followed by valid folder(s) to ignore - please use " + Args.Help[1] + " for usage information");
                             Environment.Exit(0);
                         }
                         ignore = false;
                     }
-
-                    excludedFolders.Add(dirName.ToLower());
+                    else
+                    {
+                        excludedFolders.Add(dirName.ToLower());
+                        continue;
+                    }
                 }
 
-                switch (args[i])
+
+                if (Args.Help.Contains(args[i]))
                 {
-                    case (Args.Help):
-                        Console.WriteLine(Args.HelpDocumentation);
+                    Console.WriteLine(Args.HelpDocumentation);
+                    Environment.Exit(0);
+                }
+                else if (Args.UseRegex.Contains(args[i]))
+                    useRegex = true;
+                else if (Args.Verbose.Contains(args[i]))
+                    verbose = true;
+                else if (Args.IncludeSubDirectories.Contains(args[i]))
+                    includeSubfolders = true;
+                else if (Args.IgnoreDirectory.Contains(args[i]))
+                {
+                    if (i == args.Length - 1)
+                    {
+                        Console.WriteLine("incorrect usage of " + args[i] + " - please use " + Args.Help[1] + " for usage information");
                         Environment.Exit(0);
-                        break;
-                    case (Args.UseRegex):
-                        useRegex = true;
-                        break;
-                    case (Args.Verbose):
-                        verbose = true;
-                        break;
-                    case (Args.IncludeSubDirectories):
-                        includeSubfolders = true;
-                        break;
-                    case (Args.IgnoreDirectory):
-                        ignore = true;
-                        break;
-                    default:
-                        break;
+                    }
+
+                    ignore = true;
+                }
+                else
+                {
+                    if (i != 0)
+                    {
+                        Console.WriteLine(args[i] + "is not a valid argument, please use " + Args.Help[1] + " for usage information");
+                        Environment.Exit(0);
+                    }
                 }
             }
 
             if (excludedFolders.Count() > 0 && !includeSubfolders)
             {
-                Console.WriteLine("incorrect usage of " + Args.IgnoreDirectory + " - please use " + Args.Help + " for usage information");
+                Console.WriteLine("incorrect usage of " + Args.IgnoreDirectory[1] + " - please use " + Args.Help[1] + " for usage information");
                 Environment.Exit(0);
             }
         }

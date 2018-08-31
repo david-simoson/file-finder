@@ -2,17 +2,17 @@
 {
     public static class Args
     {
-        private static int padLength = 11;
+        private static int padLength = 23;
 
-        public const string Help = "-help";
+        public static readonly string[] Help = { "-h", "--help" };
 
-        public const string UseRegex = "-rgx";
+        public static readonly string[] UseRegex = { "-r", "--regex" };
 
-        public const string IncludeSubDirectories = "-sf";
+        public static readonly string[] IncludeSubDirectories = { "-s", "--subdirectories" };
 
-        public const string IgnoreDirectory = "-ignore";
+        public static readonly string[] IgnoreDirectory = { "-i", "--ignoredirectories" };
 
-        public const string Verbose = "-v";
+        public static readonly string[] Verbose = { "-v", "--verbose" };
 
         //Help Strings
         public static readonly string UseRegexHelp = 
@@ -41,14 +41,16 @@
 {2}
 {3}", UseRegexHelp, IncludeSubDirectoriesHelp, VerboseHelp, IgnoreDirectoryHelp);
 
-        private static string GetPaddedHelpString(string argString)
+        private static string GetPaddedHelpString(string[] argString)
         {
-            for (var i = argString.Length; i < padLength; i++)
+            var tmpString = argString[0] + ", " + argString[1];
+
+            for (var i = tmpString.Length; i < padLength; i++)
             {
-                argString += " ";
+                tmpString += " ";
             }
 
-            return argString;
+            return tmpString;
         }
     }
 }
