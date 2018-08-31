@@ -34,7 +34,7 @@ namespace Finder
                 Display.numHits = numHits;
 
             if (errors != 0)
-                Display.errors = numHits;
+                Display.errors = errors;
 
             var progressMessage = 
                 string.Format("Total Files: {0}  Searched: {1}  Hits: {2}  Errors:  {3}",
@@ -52,7 +52,7 @@ namespace Finder
             {
                 Console.WriteLine("\r\n");
 
-                Console.WriteLine("\nThe following files were unable to be searched and thus were skipped during the process: ");
+                Console.WriteLine("The following files were unable to be searched and thus were skipped during the process: ");
                 foreach (string errFile in errorFiles)
                 {
                     Console.WriteLine(errFile);
@@ -66,7 +66,7 @@ namespace Finder
                 return;
             }
 
-            Console.WriteLine("\r\n");
+            Console.Write("\r\n");
 
             Console.WriteLine("The following files contained the search string: ");
             foreach (string file in foundFiles)
