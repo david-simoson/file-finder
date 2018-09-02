@@ -27,11 +27,13 @@ Next take the created executable and place it in a directory of your choosing
 This would be a directory where you would store utilities and such, or you could optionally keep it in the project directory
 ```
 
-Next Add the directory containing the Finder executable to the list of PATH environment variables in Windows
+Next Add the directory containing the Finder executable to the list of PATH environment variables in Windows (note if you are only going to use the GUI version, this step is not necessary)
 
-You should now be able to run finder from any directory on your PC
+You should now be able to run finder from any directory on your PC (only if you added to PATH)
 
-### Usage
+(recommended - for GUI only) Create a shortcut that includes the -g argument, this will allow you to launch the application from a shortcut 
+
+### Command Line Version Usage
 
 Open command prompt in directory where search is intended
 
@@ -46,3 +48,13 @@ Will return all files which contain the string "mySearchString"
 finder -h
 ```
 Additional usage information available in inline "help" documentation
+
+### GUI Version Usage
+
+Select directory
+
+Enter search string
+
+Toggle arguments
+
+Click search

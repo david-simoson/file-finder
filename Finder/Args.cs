@@ -14,6 +14,8 @@
 
         public static readonly string[] Verbose = { "-v", "--verbose" };
 
+        public static readonly string[] UseGui = { "-g", "--usegui" };
+
         //Help Strings
         public static readonly string UseRegexHelp = 
             string.Format("{0} indicates that the search string is a regex string", 
@@ -27,6 +29,10 @@
             string.Format("{0} indicates that console will write one line for each file being searched", 
                 GetPaddedHelpString(Verbose));
 
+        public static readonly string UseGuiHelp =
+            string.Format("{0} indicates that the gui version will be run instead of the console version",
+                GetPaddedHelpString(UseGui));
+
         public static readonly string IgnoreDirectoryHelp = string.Format(
 @"{0} ignore the contents of a specific subfolder (encapsulate in quotes if folder is space separated)
     ignore must also include subfolder arg
@@ -39,7 +45,8 @@
 {0}
 {1}
 {2}
-{3}", UseRegexHelp, IncludeSubDirectoriesHelp, VerboseHelp, IgnoreDirectoryHelp);
+{3}
+{4}", UseRegexHelp, IncludeSubDirectoriesHelp, VerboseHelp, IgnoreDirectoryHelp, UseGuiHelp);
 
         private static string GetPaddedHelpString(string[] argString)
         {

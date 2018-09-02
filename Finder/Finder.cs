@@ -5,10 +5,12 @@ using System.Linq;
 
 namespace Finder
 {
-    class Finder
+    public class Finder
     {
+        public event EventHandler<int> FileSearched;
+
         //private vars
-        private string currDir;
+        private string searchDirectory;
         private string[] allFiles;
         private string searchString;
         private List<string> foundFiles;
@@ -16,14 +18,23 @@ namespace Finder
         private FileSearcher searcher;
 
         //args
+        private bool useGui = false;
         private bool useRegex = false;
         private bool includeSubfolders = false;
         private bool verbose = false;
         private List<string> excludedFolders;
 
+        //properties
+        public string SearchDirectory { get => searchDirectory; set => searchDirectory = value; }
+        public string SearchString { get => searchString; set => searchString = value; }
+        public bool UseGui { get => useGui; set => useGui = value; }
+        public bool UseRegex { get => useRegex; set => useRegex = value; }
+        public bool IncludeSubfolders { get => includeSubfolders; set => includeSubfolders = value; }
+        public bool Verbose { get => verbose; set => verbose = value; }
+
         public Finder(string[] args)
         {
-            currDir = Directory.GetCurrentDirectory();
+            searchDirectory = Directory.GetCurrentDirectory();
             excludedFolders = new List<string>();
 
             if (args.Length > 0)
@@ -31,42 +42,65 @@ namespace Finder
 
             foundFiles = new List<string>();
             errorFiles = new List<string>();
-            searcher = new FileSearcher(searchString);
-            searcher.FileFound += OnFileFound;
-            searcher.ErrorFound += OnErrorFound;
-            Find();
+            searcher = new FileSearcher();
+            FileSearcher.FileFound += OnFileFound;
+            FileSearcher.ErrorFound += OnErrorFound;
+
+            if (!UseGui)
+                Find();
         }
 
         public void Find()
         {
-            if (!includeSubfolders)
-                allFiles = Directory.GetFiles(currDir);
+            if (errorFiles.Count > 0)
+                errorFiles = new List<string>();
+            if (foundFiles.Count > 0)
+                foundFiles = new List<string>();
+
+            if (!IncludeSubfolders)
+                allFiles = Directory.GetFiles(searchDirectory);
 
             else
-                allFiles = Directory.GetFiles(currDir, "*.*", SearchOption.AllDirectories)
+                allFiles = Directory.GetFiles(searchDirectory, "*.*", SearchOption.AllDirectories)
                     .Where(f => !excludedFolders.Contains(Path.GetDirectoryName(f).ToLower()))
                     .ToArray();
 
-            if (!verbose)
-                Display.ShowProgress(allFiles.Length);
+            if (!Verbose)
+            {
+                if (!useGui)
+                    Display.ShowProgress(allFiles.Length);
+            }
 
             for (var i = 0; i < allFiles.Length; i++)
             {
-                if (!useRegex)
+                if (!UseRegex)
                 {
-                    searcher.Search(allFiles[i]);
+                    searcher.Search(allFiles[i], searchString);
                 }
                 else
                 {
-                    searcher.SearchRegex(allFiles[i]);
+                    searcher.SearchRegex(allFiles[i], searchString);
                 }
-                if (!verbose)
-                    Display.ShowProgress(allFiles.Length, i + 1);
+                if (!Verbose)
+                {
+                    if (!useGui)
+                        Display.ShowProgress(allFiles.Length, i + 1);
+                }
                 else
-                    Console.WriteLine("Searched: " + allFiles[i]);
+                {
+                    if (!useGui)
+                        Console.WriteLine("Searched: " + allFiles[i]);
+                }
+                
+                //TODO: fix this - ugly
+                double progress = 
+                    Math.Round(((double)i / (double)allFiles.Length) * 100);
+
+                OnFileSearched(this, Convert.ToInt32(progress));
             }
 
-            Display.PrintSummary(foundFiles.ToArray(), errorFiles.ToArray());
+            if (!useGui)
+                Display.PrintSummary(foundFiles.ToArray(), errorFiles.ToArray());
         }  
 
         private void InitializeArgs(string[] args)
@@ -79,7 +113,7 @@ namespace Finder
             {
                 if (ignore)
                 {
-                    var dirName = currDir + "\\" + args[i].Replace("\"", "");
+                    var dirName = searchDirectory + "\\" + args[i].Replace("\"", "");
 
                     if (!Directory.Exists(dirName))
                     {
@@ -104,11 +138,13 @@ namespace Finder
                     Environment.Exit(0);
                 }
                 else if (Args.UseRegex.Contains(args[i]))
-                    useRegex = true;
+                    UseRegex = true;
+                else if (Args.UseGui.Contains(args[i]))
+                    UseGui = true;
                 else if (Args.Verbose.Contains(args[i]))
-                    verbose = true;
+                    Verbose = true;
                 else if (Args.IncludeSubDirectories.Contains(args[i]))
-                    includeSubfolders = true;
+                    IncludeSubfolders = true;
                 else if (Args.IgnoreDirectory.Contains(args[i]))
                 {
                     if (i == args.Length - 1)
@@ -129,7 +165,7 @@ namespace Finder
                 }
             }
 
-            if (excludedFolders.Count() > 0 && !includeSubfolders)
+            if (excludedFolders.Count() > 0 && !IncludeSubfolders)
             {
                 Console.WriteLine("incorrect usage of " + Args.IgnoreDirectory[1] + " - please use " + Args.Help[1] + " for usage information");
                 Environment.Exit(0);
@@ -143,10 +179,16 @@ namespace Finder
                 foundFiles.Add(fileName);
             }
 
-            if (!verbose)
-                Display.ShowProgress(allFiles.Length, 0, foundFiles.Count());
+            if (!Verbose)
+            {
+                if (!useGui)
+                    Display.ShowProgress(allFiles.Length, 0, foundFiles.Count());
+            }
             else
-                Console.WriteLine("MATCH FOUND: " + fileName);
+            {
+                if (!useGui)
+                    Console.WriteLine("MATCH FOUND: " + fileName);
+            }
         }
 
         private void OnErrorFound(object sender, string fileName)
@@ -156,10 +198,21 @@ namespace Finder
                 errorFiles.Add(fileName);
             }
 
-            if(!verbose)
-                Display.ShowProgress(allFiles.Length, 0, 0, errorFiles.Count());
+            if (!Verbose)
+            {
+                if (!useGui)
+                    Display.ShowProgress(allFiles.Length, 0, 0, errorFiles.Count());
+            }
             else
-                Console.WriteLine("ERROR SEARCHING: " + fileName);
+            {
+                if (!useGui)
+                    Console.WriteLine("ERROR SEARCHING: " + fileName);
+            }
+        }
+
+        protected virtual void OnFileSearched(object sender, int progressPercentage)
+        {
+            FileSearched?.Invoke(this, progressPercentage);
         }
     }
 }

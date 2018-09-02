@@ -7,17 +7,10 @@ namespace Finder
 {
     public class FileSearcher
     {
-        public event EventHandler<string> FileFound;
-        public event EventHandler<string> ErrorFound;
+        public static event EventHandler<string> FileFound;
+        public static event EventHandler<string> ErrorFound;
 
-        private string searchString;
-
-        public FileSearcher(string searchString)
-        {
-            this.searchString = searchString;
-        }
-
-        public void Search(string fileName)
+        public void Search(string fileName, string searchString)
         {
             string[] allLines = null;
 
@@ -42,7 +35,7 @@ namespace Finder
             }));
         }
 
-        public void SearchRegex(string fileName)
+        public void SearchRegex(string fileName, string searchString)
         {
             string text = null;
             try
