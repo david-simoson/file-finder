@@ -43,6 +43,6 @@ finder mySearchString
 Will return all files which contain the string "mySearchString"
 
 ```
-finder [0-9]+ -rgx
+finder -h
 ```
-Will return any files which contain a number (any regex string is permitted: the -rgx arg indicates that the search string is to be treated as regex)
+Additional usage information available in inline "help" documentation
