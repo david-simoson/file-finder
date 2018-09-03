@@ -14,7 +14,7 @@ namespace Finder
         static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
         const int SW_HIDE = 0;
-        const int SW_SHOW = 5;
+        const int SW_SHOW = 1;
 
         [STAThread]
         static void Main(string[] args)
@@ -29,13 +29,7 @@ namespace Finder
 
             else
             {
-                if (args.Length < 1)
-                {
-                    Console.WriteLine("You must pass a search string as an argument, Enter " + Args.Help[1] + " for more information on usage");
-                    Environment.Exit(0);
-                }
-
-                var finder = new Finder(args);
+                FinderConsole console = new FinderConsole(args);
             }
         }
     }

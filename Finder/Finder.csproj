@@ -46,9 +46,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Args.cs" />
-    <Compile Include="Display.cs" />
     <Compile Include="FileSearcher.cs" />
     <Compile Include="Finder.cs" />
+    <Compile Include="FinderConsole.cs" />
     <Compile Include="FinderForm.cs">
       <SubType>Form</SubType>
     </Compile>

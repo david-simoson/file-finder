@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Finder
@@ -18,25 +14,36 @@ namespace Finder
         private TextBox textBoxSearchString;
         private BackgroundWorker backgroundWorkerFinder;
         private ProgressBar progressBar;
-        private Label label1;
-        private Label label2;
-        private Label label3;
+        private Label labelDirectory;
+        private Label labelSearchString;
+        private Label labelResults;
         private CheckBox checkBoxUseRegex;
         private CheckBox checkBoxSearchSubdirectories;
         private Button buttonFolderBrowser;
 
         //private vars
         private Finder finder;
+        private int totalFiles;
+        private int searchedFiles;
 
         public FinderForm(string[] args)
         {
             InitializeComponent();
             finder = new Finder(args);
-            finder.FileSearched += ShowProgress;
-
+            finder.ProgressReport += ShowProgress;
             FileSearcher.FileFound += OnFileFound;
 
+            finder.InitializeArgs(args);
+            SetFormArgs();
+
             backgroundWorkerFinder.DoWork += new DoWorkEventHandler(backgroundWorkerFinder_DoWork);
+        }
+
+        private void SetFormArgs()
+        {
+            textBoxDirectory.Text = finder.SearchDirectory;
+            checkBoxSearchSubdirectories.Checked = finder.IncludeSubfolders;
+            checkBoxUseRegex.Checked = finder.UseRegex;
         }
 
         private void InitializeComponent()
@@ -48,9 +55,9 @@ namespace Finder
             this.textBoxSearchString = new System.Windows.Forms.TextBox();
             this.backgroundWorkerFinder = new System.ComponentModel.BackgroundWorker();
             this.progressBar = new System.Windows.Forms.ProgressBar();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
+            this.labelDirectory = new System.Windows.Forms.Label();
+            this.labelSearchString = new System.Windows.Forms.Label();
+            this.labelResults = new System.Windows.Forms.Label();
             this.checkBoxUseRegex = new System.Windows.Forms.CheckBox();
             this.checkBoxSearchSubdirectories = new System.Windows.Forms.CheckBox();
             this.buttonFolderBrowser = new System.Windows.Forms.Button();
@@ -79,6 +86,7 @@ namespace Finder
             this.listBoxResults.ItemHeight = 20;
             this.listBoxResults.Location = new System.Drawing.Point(61, 206);
             this.listBoxResults.Name = "listBoxResults";
+            this.listBoxResults.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.listBoxResults.Size = new System.Drawing.Size(401, 364);
             this.listBoxResults.TabIndex = 3;
             // 
@@ -96,32 +104,32 @@ namespace Finder
             this.progressBar.Size = new System.Drawing.Size(306, 23);
             this.progressBar.TabIndex = 4;
             // 
-            // label1
+            // labelDirectory
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(8, 25);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(76, 20);
-            this.label1.TabIndex = 5;
-            this.label1.Text = "Directory:";
+            this.labelDirectory.AutoSize = true;
+            this.labelDirectory.Location = new System.Drawing.Point(8, 25);
+            this.labelDirectory.Name = "labelDirectory";
+            this.labelDirectory.Size = new System.Drawing.Size(76, 20);
+            this.labelDirectory.TabIndex = 5;
+            this.labelDirectory.Text = "Directory:";
             // 
-            // label2
+            // labelSearchString
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(8, 58);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(110, 20);
-            this.label2.TabIndex = 6;
-            this.label2.Text = "Search String:";
+            this.labelSearchString.AutoSize = true;
+            this.labelSearchString.Location = new System.Drawing.Point(8, 58);
+            this.labelSearchString.Name = "labelSearchString";
+            this.labelSearchString.Size = new System.Drawing.Size(110, 20);
+            this.labelSearchString.TabIndex = 6;
+            this.labelSearchString.Text = "Search String:";
             // 
-            // label3
+            // labelResults
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(11, 174);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(67, 20);
-            this.label3.TabIndex = 7;
-            this.label3.Text = "Results:";
+            this.labelResults.AutoSize = true;
+            this.labelResults.Location = new System.Drawing.Point(11, 174);
+            this.labelResults.Name = "labelResults";
+            this.labelResults.Size = new System.Drawing.Size(67, 20);
+            this.labelResults.TabIndex = 7;
+            this.labelResults.Text = "Results:";
             // 
             // checkBoxUseRegex
             // 
@@ -159,9 +167,9 @@ namespace Finder
             this.Controls.Add(this.buttonFolderBrowser);
             this.Controls.Add(this.checkBoxSearchSubdirectories);
             this.Controls.Add(this.checkBoxUseRegex);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.labelResults);
+            this.Controls.Add(this.labelSearchString);
+            this.Controls.Add(this.labelDirectory);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.textBoxSearchString);
             this.Controls.Add(this.listBoxResults);
@@ -177,6 +185,9 @@ namespace Finder
         private void Initialize()
         {
             listBoxResults.Items.Clear();
+
+            totalFiles = 0;
+            searchedFiles = 0;
 
             finder.SearchDirectory = textBoxDirectory.Text;
             finder.SearchString = textBoxSearchString.Text;
@@ -204,11 +215,29 @@ namespace Finder
             finder.Find();
         }
 
-        private void ShowProgress(object sender, int progressPercentage)
+        private void ShowProgress(object sender, Milestones milestone)
+        {
+            switch (milestone)
+            {
+                case (Milestones.GotFiles):
+                    totalFiles = finder.AllFiles.Length;
+                    break;
+                case (Milestones.SearchedFile):
+                    searchedFiles++;
+                    double progress =
+                        Math.Round(((double)searchedFiles / (double)totalFiles) * 100);
+                    UpdateProgressBar(Convert.ToInt32(progress));
+                    break;
+                case (Milestones.Done):
+                    break;
+            }
+        }
+
+        private void UpdateProgressBar(int progressPercentage)
         {
             if (progressBar.InvokeRequired)
             {
-                Invoke(new Action<object, int>(ShowProgress), new object[] { null, progressPercentage });
+                Invoke(new Action<int>(UpdateProgressBar), new object[] { progressPercentage });
             }
             progressBar.Value = progressPercentage;
         }
