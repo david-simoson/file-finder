@@ -48,6 +48,7 @@ namespace Finder
         {
             excludedFolders = new List<string>();
 
+            SetGui(args);//are we using the gui?
             if (!useGui && string.IsNullOrEmpty(searchDirectory))
                 searchDirectory = Directory.GetCurrentDirectory();
 
@@ -174,6 +175,14 @@ namespace Finder
                     }
                 }
             }
+        }
+
+        private void SetGui(string[] args)
+        {
+            if (args.ToList().Exists(a => Args.UseGui.ToList().Contains(a)))
+                useGui = true;
+            else
+                useGui = false;
         }
 
         private void OnFileFound(object sender, string fileName)

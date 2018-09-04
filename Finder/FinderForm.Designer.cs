@@ -45,12 +45,13 @@
             // 
             // buttonFolderBrowser
             // 
-            this.buttonFolderBrowser.Location = new System.Drawing.Point(423, 12);
+            this.buttonFolderBrowser.Location = new System.Drawing.Point(432, 12);
             this.buttonFolderBrowser.Name = "buttonFolderBrowser";
-            this.buttonFolderBrowser.Size = new System.Drawing.Size(75, 23);
+            this.buttonFolderBrowser.Size = new System.Drawing.Size(75, 27);
             this.buttonFolderBrowser.TabIndex = 21;
             this.buttonFolderBrowser.Text = "Select";
             this.buttonFolderBrowser.UseVisualStyleBackColor = true;
+            this.buttonFolderBrowser.Click += new System.EventHandler(this.buttonFolderBrowser_Click);
             // 
             // checkBoxSearchSubdirectories
             // 
@@ -108,7 +109,7 @@
             // 
             // textBoxSearchString
             // 
-            this.textBoxSearchString.Location = new System.Drawing.Point(140, 45);
+            this.textBoxSearchString.Location = new System.Drawing.Point(149, 45);
             this.textBoxSearchString.Name = "textBoxSearchString";
             this.textBoxSearchString.Size = new System.Drawing.Size(358, 26);
             this.textBoxSearchString.TabIndex = 12;
@@ -131,15 +132,16 @@
             this.buttonSearch.TabIndex = 13;
             this.buttonSearch.Text = "Search";
             this.buttonSearch.UseVisualStyleBackColor = true;
+            this.buttonSearch.Click += new System.EventHandler(this.buttonSearch_Click);
             // 
             // textBoxDirectory
             // 
-            this.textBoxDirectory.Location = new System.Drawing.Point(140, 12);
+            this.textBoxDirectory.Location = new System.Drawing.Point(149, 12);
             this.textBoxDirectory.Name = "textBoxDirectory";
             this.textBoxDirectory.Size = new System.Drawing.Size(272, 26);
             this.textBoxDirectory.TabIndex = 11;
             // 
-            // Form1
+            // FinderForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -155,8 +157,8 @@
             this.Controls.Add(this.listBoxResults);
             this.Controls.Add(this.buttonSearch);
             this.Controls.Add(this.textBoxDirectory);
-            this.Name = "Form1";
-            this.Text = "Form1";
+            this.Name = "FinderForm";
+            this.Text = "Finder";
             this.ResumeLayout(false);
             this.PerformLayout();
 
