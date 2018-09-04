@@ -55,15 +55,6 @@ namespace Finder
             listBoxResults.Items.Add(fileName);
         }
 
-        private void ChooseFolder()
-        {
-        }
-
-        private void backgroundWorkerFinder_DoWork(object sender, DoWorkEventArgs e)
-        {
-            finder.Find();
-        }
-
         private void ShowProgress(object sender, Milestones milestone)
         {
             switch (milestone)
@@ -109,6 +100,11 @@ namespace Finder
             {
                 textBoxDirectory.Text = folderBrowserDialog.SelectedPath;
             }
+        }
+
+        private void backgroundWorkerFinder_DoWork(object sender, DoWorkEventArgs e)
+        {
+            finder.Find();
         }
     }
 }
